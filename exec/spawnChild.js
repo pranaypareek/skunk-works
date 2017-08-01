@@ -25,13 +25,16 @@ function _prepareCMD(next) {
     bag.execFile = 'hello.js';
   } else if (bag.runtime === 'go') {
     bag.cmd = 'go';
-    bag.execFile = 'hello.go';
     bag.args.push('run');
+
+    bag.execFile = 'hello.go';
   } else if (bag.runtime === 'ruby') {
-    bag.execFile = 'hello.rb';
     bag.cmd = 'ruby';
+    bag.execFile = 'hello.rb';
   }
 
+  //the file will always be the last argument in a command
+  //eg. (node hello.js) or (go run hello.go) etc
   bag.args.push(bag.execFile);
   return next();
 }
