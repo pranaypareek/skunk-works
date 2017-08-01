@@ -16,6 +16,9 @@ async.series([
   _spawnChild
 ]);
 
+//TODO: the script will be deliverd in a payload
+//For now, emulate the behaviour by reading a script, writing it
+//to another file, and executing that file in the spawned process
 function _readScriptContent(next) {
   console.log('Inside ----', _readScriptContent.name);
 
@@ -30,6 +33,7 @@ function _readScriptContent(next) {
   });
 }
 
+//creates an empty file to write the received script to
 function _touchEmptyFile(next) {
   console.log('Inside ----', _touchEmptyFile.name);
   bag.execFile = 'script.js';
@@ -47,6 +51,7 @@ function _touchEmptyFile(next) {
   });
 }
 
+//writes the received script to a local file to be used for execution
 function _writeScriptToFile(next) {
   console.log('Inside ----', _writeScriptToFile.name);
 
@@ -61,6 +66,7 @@ function _writeScriptToFile(next) {
   });
 }
 
+//spawn the child process and execute the script
 function _spawnChild(next) {
   console.log('Inside ----', _spawnChild.name);
 
@@ -72,12 +78,14 @@ function _spawnChild(next) {
 
   bag.res = '';
 
+  //collate data coming from the spawn stream
   spawnProcess.stdout.on('data', function(data) {
     let str = data.toString();
     let lines = str.split(/(\r?\n)/g);
     bag.res += lines.join("");
   });
 
+  //if error, store the error object in the bag variable
   spawnProcess.on('error', function(err) {
     console.log("Error processing the child process:", err);
     bag.error = err;
