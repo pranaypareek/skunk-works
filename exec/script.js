@@ -1,2 +1,2 @@
-console.log('\nDear World,');
-console.log('Everyone seems to be asleep');
+console.log('\nHello, world!');
+console.log('[Node JS]')

@@ -4,79 +4,50 @@ const async = require('async');
 const fs = require('fs');
 const _ = require('underscore');
 
-const exec = require('child_process').exec;
 const spawn = require('child_process').spawn;
 
 let bag = {};
+bag.runtime = 'ruby';
 
 async.series([
-  _readScriptContent,
-  _touchEmptyFile,
-  _writeScriptToFile,
+  _prepareCMD,
   _spawnChild
 ]);
 
-//TODO: the script will be deliverd in a payload
-//For now, emulate the behaviour by reading a script, writing it
-//to another file, and executing that file in the spawned process
-function _readScriptContent(next) {
-  console.log('Inside ----', _readScriptContent.name);
+function _prepareCMD(next) {
+  console.log('Inside ----', _prepareCMD.name);
 
-  fs.readFile('hello.js', 'utf8', function(err, contents) {
-    if (err) {
-      console.log(err);
-      return next(err);
-    }
+  bag.cmd = '';
+  bag.args = [];
 
-    bag.script = contents;
-    return next();
-  });
-}
+  if (bag.runtime === 'node') {
+    bag.cmd = 'node';
+    bag.execFile = 'hello.js';
+  } else if (bag.runtime === 'go') {
+    bag.cmd = 'go';
+    bag.execFile = 'hello.go';
+    bag.args.push('run');
+  } else if (bag.runtime === 'ruby') {
+    bag.execFile = 'hello.rb';
+    bag.cmd = 'ruby';
+  }
 
-//creates an empty file to write the received script to
-function _touchEmptyFile(next) {
-  console.log('Inside ----', _touchEmptyFile.name);
-  bag.execFile = 'script.js';
-
-  const cmd = 'touch '.concat(bag.execFile);
-
-  exec(cmd, function(err, stdout, stderr) {
-    if (err) {
-      console.log(err);
-      return next(err);
-    }
-
-    console.log('Created empty script file!');
-    return next();
-  });
-}
-
-//writes the received script to a local file to be used for execution
-function _writeScriptToFile(next) {
-  console.log('Inside ----', _writeScriptToFile.name);
-
-  fs.writeFile(bag.execFile, bag.script, function(err) {
-    if (err) {
-      console.log(err);
-      return next(err);
-    }
-
-    console.log('Wrote script to file!');
-    return next();
-  });
+  bag.args.push(bag.execFile);
+  return next();
 }
 
 //spawn the child process and execute the script
 function _spawnChild(next) {
   console.log('Inside ----', _spawnChild.name);
 
-  let args = [];
-  args.push(bag.execFile);
-
-  const spawnProcess = spawn('node', args);
+  const spawnProcess = spawn(bag.cmd, bag.args);
   spawnProcess.stdout.setEncoding('utf8');
 
   bag.res = '';
+
+  console.log('\n------------------');
+  console.log('Executing:', bag.cmd, bag.args);
+  console.log('------------------');
 
   //collate data coming from the spawn stream
   spawnProcess.stdout.on('data', function(data) {
@@ -91,10 +62,15 @@ function _spawnChild(next) {
     bag.error = err;
   });
 
+  //prepare final response when the process exits
   spawnProcess.on('close', function(code) {
     if (!_.isEmpty(bag.error)) {
       return next(bag.error);
     } else {
+      console.log('\n------------------');
+      console.log('Processed!');
+      console.log('------------------');
+
       console.log(bag.res);
       return next();
     }
