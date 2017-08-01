@@ -1,9 +1,13 @@
-var async = require('async');
-var fs = require('fs');
-var exec = require('child_process').exec;
-var spawn = require('child_process').spawn;
+'use strict';
 
-var bag = {};
+const async = require('async');
+const fs = require('fs');
+const _ = require('underscore');
+
+const exec = require('child_process').exec;
+const spawn = require('child_process').spawn;
+
+let bag = {};
 
 async.series([
   _readScriptContent,
@@ -18,7 +22,7 @@ function _readScriptContent(next) {
   fs.readFile('hello.js', 'utf8', function(err, contents) {
     if (err) {
       console.log(err);
-      return (next(err));
+      return next(err);
     }
 
     bag.script = contents;
@@ -28,11 +32,14 @@ function _readScriptContent(next) {
 
 function _touchEmptyFile(next) {
   console.log('Inside ----', _touchEmptyFile.name);
+  bag.execFile = 'script.js';
 
-  exec('touch script.js', function(err, stdout, stderr) {
+  const cmd = 'touch '.concat(bag.execFile);
+
+  exec(cmd, function(err, stdout, stderr) {
     if (err) {
       console.log(err);
-      return (next(err));
+      return next(err);
     }
 
     console.log('Created empty script file!');
@@ -42,15 +49,13 @@ function _touchEmptyFile(next) {
 
 function _writeScriptToFile(next) {
   console.log('Inside ----', _writeScriptToFile.name);
-  bag.args = [];
 
-  fs.writeFile('script.js', bag.script, function(err) {
+  fs.writeFile(bag.execFile, bag.script, function(err) {
     if (err) {
       console.log(err);
-      return (next(err));
+      return next(err);
     }
 
-    bag.args.push('script.js');
     console.log('Wrote script to file!');
     return next();
   });
@@ -59,20 +64,31 @@ function _writeScriptToFile(next) {
 function _spawnChild(next) {
   console.log('Inside ----', _spawnChild.name);
 
-  var spawnProcess = spawn('node', bag.args);
+  let args = [];
+  args.push(bag.execFile);
+
+  const spawnProcess = spawn('node', args);
   spawnProcess.stdout.setEncoding('utf8');
 
   bag.res = '';
 
   spawnProcess.stdout.on('data', function(data) {
-    var str = data.toString()
-    var lines = str.split(/(\r?\n)/g);
+    let str = data.toString();
+    let lines = str.split(/(\r?\n)/g);
     bag.res += lines.join("");
   });
 
-  spawnProcess.on('close', function(code) {
-    console.log(bag.res);
+  spawnProcess.on('error', function(err) {
+    console.log("Error processing the child process:", err);
+    bag.error = err;
   });
 
-  return next();
+  spawnProcess.on('close', function(code) {
+    if (!_.isEmpty(bag.error)) {
+      return next(bag.error);
+    } else {
+      console.log(bag.res);
+      return next();
+    }
+  });
 }
