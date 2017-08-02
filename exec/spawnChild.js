@@ -7,7 +7,7 @@ const _ = require('underscore');
 const child_process = require('child_process');
 
 let bag = {};
-bag.runtime = 'go';
+bag.runtime = process.argv[2];
 
 async.series([
   _prepareCMD,
@@ -22,15 +22,15 @@ function _prepareCMD(next) {
 
   if (bag.runtime === 'node') {
     bag.cmd = 'node';
-    bag.execFile = 'hello.js';
+    bag.execFile = 'scripts/hello.js';
   } else if (bag.runtime === 'go') {
     bag.cmd = 'go';
     bag.args.push('run');
 
-    bag.execFile = 'hello.go';
+    bag.execFile = 'scripts/hello.go';
   } else if (bag.runtime === 'ruby') {
     bag.cmd = 'ruby';
-    bag.execFile = 'hello.rb';
+    bag.execFile = 'scripts/hello.rb';
   }
 
   //the file will always be the last argument in a command
