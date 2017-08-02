@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "amqplib": "*",
+    "async": "*",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "underscore": "*"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  },
+  "scripts": {
+    "start": "nodemon server.js"
+  }
+}
