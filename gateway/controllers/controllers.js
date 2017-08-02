@@ -9,16 +9,15 @@ exports.echoReq = function(req, res) {
 
 exports.publishReq = function(req, res) {
   const reqBody = req.body;
-  console.log('Published:\n', reqBody);
+  console.log('Published:\n', JSON.stringify(reqBody));
 
   amqp.connect('amqp://localhost', function(err, conn) {
     conn.createChannel(function(err, ch) {
       var q = 'hello';
-      var msg = reqBody.runtime;
+      var msg = JSON.stringify(reqBody);
 
       ch.assertQueue(q, {durable: false});
       ch.sendToQueue(q, new Buffer(msg));
-      //console.log('Runtime requested: %s', msg);
       res.send('OK');
     });
     setTimeout(function() { conn.close(); process.exit(0); res.send('OK');}, 500);
