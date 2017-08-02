@@ -4,10 +4,10 @@ const async = require('async');
 const fs = require('fs');
 const _ = require('underscore');
 
-const spawn = require('child_process').spawn;
+const child_process = require('child_process');
 
 let bag = {};
-bag.runtime = 'ruby';
+bag.runtime = 'go';
 
 async.series([
   _prepareCMD,
@@ -39,11 +39,12 @@ function _prepareCMD(next) {
   return next();
 }
 
+/*
 //spawn the child process and execute the script
 function _spawnChild(next) {
   console.log('Inside ----', _spawnChild.name);
 
-  const spawnProcess = spawn(bag.cmd, bag.args);
+  const spawnProcess = child_process.spawn(bag.cmd, bag.args);
   spawnProcess.stdout.setEncoding('utf8');
 
   bag.res = '';
@@ -67,6 +68,7 @@ function _spawnChild(next) {
 
   //prepare final response when the process exits
   spawnProcess.on('close', function(code) {
+    console.log('Process exited with code:', code);
     if (!_.isEmpty(bag.error)) {
       return next(bag.error);
     } else {
@@ -78,4 +80,13 @@ function _spawnChild(next) {
       return next();
     }
   });
+}
+*/
+
+//spawn the child process and execute the script
+function _spawnChild(next) {
+  console.log('Inside ----', _spawnChild.name);
+
+  const result = child_process.spawnSync(bag.cmd, bag.args);
+  console.log(result.stdout.toString());
 }
