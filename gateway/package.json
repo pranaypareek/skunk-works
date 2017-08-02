@@ -6,10 +6,8 @@
     "express": "^4.15.3",
     "underscore": "*"
   },
-  "devDependencies": {
-    "nodemon": "^1.11.0"
-  },
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "forever start server.js && forever logs -f server.js",
+    "stop": "forever stop server.js"
   }
 }
