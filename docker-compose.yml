@@ -7,6 +7,7 @@ networks:
 services:
   exec:
     image: 'pranay/exec'
+    container_name: 'exec'
     depends_on:
       - 'rabbitmq'
     networks:
@@ -14,6 +15,7 @@ services:
 
   gateway:
     image: 'pranay/gateway'
+    container_name: 'gateway'
     depends_on:
       - 'rabbitmq'
     networks:
