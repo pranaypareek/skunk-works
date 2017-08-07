@@ -9,7 +9,7 @@ const child_process = require('child_process');
 
 let bag = {};
 
-amqp.connect('amqp://localhost', function(err, conn) {
+amqp.connect('amqp://172.20.0.1', function(err, conn) {
   conn.createChannel(function(err, ch) {
     var q = 'hello';
 
