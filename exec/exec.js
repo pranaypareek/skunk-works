@@ -9,28 +9,43 @@ const child_process = require('child_process');
 
 let bag = {};
 
-amqp.connect('amqp://localhost', function(err, conn) {
-  conn.createChannel(function(err, ch) {
-    var q = 'hello';
+async.retry({ times: 32, interval: 500 }, function(next) {
+    console.log('Retrying...');
+    amqp.connect('amqp://172.20.0.1', function(err, conn) {
+      if (err) {
+        next(err);
+      } else {
+        next(null, conn);
+      }
+    });
+  },
+  function(err, conn) {
+    if (err) {
+      console.log('Could not connect to RabbitMQ!');
+    } else {
+      console.log('Connection successful!');
+      conn.createChannel(function(err, ch) {
+        var q = 'hello';
 
-    ch.assertQueue(q, { durable: false });
+        ch.assertQueue(q, { durable: false });
 
-    console.log('-------------------------------------------');
-    console.log('Waiting for messages. To exit press CTRL+C');
-    console.log('-------------------------------------------\n');
+        console.log('-------------------------------------------');
+        console.log('Waiting for messages. To exit press CTRL+C');
+        console.log('-------------------------------------------\n');
 
-    ch.consume(q, function(msg) {
-      bag.msg = msg;
+        ch.consume(q, function(msg) {
+          bag.msg = msg;
 
-      async.series([
-        _parseJSON,
-        _writeScriptToFile,
-        _prepareCMD,
-        _spawnChild
-      ]);
-    }, { noAck: true });
+          async.series([
+            _parseJSON,
+            _writeScriptToFile,
+            _prepareCMD,
+            _spawnChild
+          ]);
+        }, { noAck: true });
+      });
+    }
   });
-});
 
 function _parseJSON(next) {
   console.log('Inside ----', _parseJSON.name);

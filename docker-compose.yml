@@ -1,0 +1,34 @@
+version: '2'
+
+networks:
+  app-tier:
+    driver: bridge
+
+services:
+  exec:
+    image: 'pranay/exec'
+    container_name: 'exec'
+    depends_on:
+      - 'rabbitmq'
+    networks:
+      - app-tier
+
+  gateway:
+    image: 'pranay/gateway'
+    container_name: 'gateway'
+    depends_on:
+      - 'rabbitmq'
+    networks:
+      - app-tier
+    ports:
+      - 50000:3000
+
+  rabbitmq:
+    image: 'rabbitmq:3'
+    container_name: 'rabbit-mq'
+    hostname: 'beacon'
+    networks:
+      - app-tier
+    ports:
+      - 15672:15672
+      - 5672:5672
