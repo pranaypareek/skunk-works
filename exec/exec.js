@@ -114,7 +114,7 @@ function _spawnChild(next) {
 
   bag.result = result.stdout.toString();
 
-  console.log(result.stdout.toString());
+  console.log(bag.result);
 
   console.log('------------------');
   console.log('Processed!');
