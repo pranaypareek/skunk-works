@@ -1,6 +1,6 @@
 'use strict';
 
-var amqp = require('amqplib/callback_api');
+const amqp = require('amqplib/callback_api');
 const async = require('async');
 const fs = require('fs');
 const _ = require('underscore');
@@ -25,7 +25,7 @@ async.retry({ times: 32, interval: 500 }, function(next) {
     } else {
       console.log('Connection successful!');
       conn.createChannel(function(err, ch) {
-        var q = 'hello';
+        var q = 'exec';
 
         ch.assertQueue(q, { durable: false });
 
@@ -40,7 +40,8 @@ async.retry({ times: 32, interval: 500 }, function(next) {
             _parseJSON,
             _writeScriptToFile,
             _prepareCMD,
-            _spawnChild
+            _spawnChild,
+            _publishResult
           ]);
         }, { noAck: true });
       });
@@ -54,7 +55,7 @@ function _parseJSON(next) {
 
   bag.runtime = reqBody.runtime;
   bag.script = reqBody.script;
-
+  bag.resQ = reqBody.queue;
   return next();
 }
 
@@ -110,6 +111,9 @@ function _spawnChild(next) {
   console.log('------------------');
 
   const result = child_process.spawnSync(bag.cmd, bag.args);
+
+  bag.result = result.stdout.toString();
+
   console.log(result.stdout.toString());
 
   console.log('------------------');
@@ -117,4 +121,19 @@ function _spawnChild(next) {
   console.log('------------------\n');
 
   return next();
+}
+
+function _publishResult(next) {
+  console.log('Inside ----', _publishResult.name);
+
+  amqp.connect('amqp://172.20.0.1', function(err, conn) {
+    conn.createChannel(function(err, ch) {
+      const resQ = bag.resQ;
+
+      ch.sendToQueue(resQ, new Buffer(JSON.stringify(bag)));
+      console.log('Published message to:', bag.resQ);
+
+      return next();
+    });
+  });
 }

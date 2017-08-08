@@ -1,2 +1,7 @@
 console.log('\nHello, world!');
-console.log('[Node JS]')
+
+function hello() {
+  console.log('[Node JS]');
+}
+
+setTimeout(hello, 5000);

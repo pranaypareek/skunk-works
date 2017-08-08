@@ -1,6 +1,7 @@
 'use strict';
 
-var amqp = require('amqplib/callback_api');
+const amqp = require('amqplib/callback_api');
+const uuidv1 = require('uuid/v1');
 
 exports.echoReq = function(req, res) {
   console.log('Received GET:\n', req);
@@ -9,19 +10,37 @@ exports.echoReq = function(req, res) {
 
 exports.publishReq = function(req, res) {
   const reqBody = req.body;
-  console.log('Trying to publish:\n', JSON.stringify(reqBody));
+  console.log('Connecting to queue...\n');
 
+  //add retry logic
   amqp.connect('amqp://172.20.0.1', function(err, conn) {
-    console.log(err);
     conn.createChannel(function(err, ch) {
-      var q = 'hello';
-      var msg = JSON.stringify(reqBody);
+      const q = 'exec';
+      const resQ = uuidv1();
+      const msg = reqBody;
+      msg.queue = resQ;
 
-      ch.assertQueue(q, {durable: false});
-      ch.sendToQueue(q, new Buffer(msg));
+      ch.assertQueue(q, { durable: false });
+      ch.assertQueue(resQ, { durable: false });
+
+      ch.sendToQueue(q, new Buffer(JSON.stringify(msg)));
       console.log('Published:\n', JSON.stringify(reqBody));
-      res.send('OK');
+
+      ch.consume(resQ, function(msg) {
+        var execResponse = JSON.parse(msg.content.toString());
+        console.log('Received msg from exec', execResponse.result);
+        var response = {
+          'result': execResponse.result
+        };
+        res.send(response);
+      });
     });
-    setTimeout(function() { conn.close(); process.exit(0); res.send('OK');}, 500);
+
+    setTimeout(function() {
+        conn.close();
+        process.exit(0);
+        res.send('OK');
+      },
+      10000);
   });
 };

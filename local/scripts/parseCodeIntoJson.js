@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 
-fs.readFile('hello.go', 'utf8', function(err, data) {
+fs.readFile('hello.js', 'utf8', function(err, data) {
   if (err) {
     return console.log(err);
   }
@@ -17,6 +17,11 @@ fs.readFile('hello.go', 'utf8', function(err, data) {
 {
   "runtime": "node",
   "script":"console.log('\\nHello, world!');\nconsole.log('[Node JS]')\n"
+}
+
+{
+  "runtime": "node",
+  "script": "console.log('\\nHello, world!');\n\nfunction hello() {\n  console.log('[Node JS]');\n}\n\nsetTimeout(hello, 5000);\n"
 }
 
 {
