@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 
-fs.readFile('hello.js', 'utf8', function(err, data) {
+fs.readFile('hello.go', 'utf8', function(err, data) {
   if (err) {
     return console.log(err);
   }
@@ -27,6 +27,11 @@ fs.readFile('hello.js', 'utf8', function(err, data) {
 {
   "runtime": "go",
   "script":"package main\n\nimport \"fmt\"\n\nfunc main() {\n    fmt.Println(\"\\nHello, World!\")\n    fmt.Println(\"[Go]\")\n}\n"
+}
+
+{
+  "runtime": "go",
+  "script":"package main\n\nimport (\n  \"fmt\"\n  \"time\"\n)\n\nfunc main() {\n    fmt.Println(\"\\nHello, World!\")\n    time.Sleep(5000 * time.Millisecond)\n    fmt.Println(\"[Go]\")\n}\n"
 }
 
 {
