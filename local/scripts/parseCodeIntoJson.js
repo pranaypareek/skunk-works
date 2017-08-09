@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 
-fs.readFile('hello.go', 'utf8', function(err, data) {
+fs.readFile('hello.rb', 'utf8', function(err, data) {
   if (err) {
     return console.log(err);
   }
@@ -37,6 +37,11 @@ fs.readFile('hello.go', 'utf8', function(err, data) {
 {
   "runtime":"ruby",
   "script":"puts \"\\nHello, World!\"\nputs \"[Ruby]\"\n"
+}
+
+{
+  "runtime":"ruby",
+  "script":"puts \"\\nHello, World!\"\nsleep(5)\nputs \"[Ruby]\"\n"
 }
 
 */

@@ -41,6 +41,6 @@ exports.publishReq = function(req, res) {
         process.exit(0);
         res.send('OK');
       },
-      10000);
+      15000);
   });
 };
