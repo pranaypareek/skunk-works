@@ -14,6 +14,8 @@ fs.readFile('hello.rb', 'utf8', function(err, data) {
 
 /*
 
+-------------- NODE --------------
+
 {
   "runtime": "node",
   "script":"console.log('\\nHello, world!');\nconsole.log('[Node JS]')\n"
@@ -25,6 +27,19 @@ fs.readFile('hello.rb', 'utf8', function(err, data) {
 }
 
 {
+  "runtime": "node",
+  "taskname": "nodeHello",
+  "script": "console.log('\\nHello, world!');\n\nfunction hello() {\n  console.log('[Node JS]');\n}\n\nsetTimeout(hello, 2000);\n"
+}
+
+{
+  "runtime": "node",
+  "taskname": "nodeHello"
+}
+
+-------------- GO --------------
+
+{
   "runtime": "go",
   "script":"package main\n\nimport \"fmt\"\n\nfunc main() {\n    fmt.Println(\"\\nHello, World!\")\n    fmt.Println(\"[Go]\")\n}\n"
 }
@@ -33,6 +48,8 @@ fs.readFile('hello.rb', 'utf8', function(err, data) {
   "runtime": "go",
   "script":"package main\n\nimport (\n  \"fmt\"\n  \"time\"\n)\n\nfunc main() {\n    fmt.Println(\"\\nHello, World!\")\n    time.Sleep(5000 * time.Millisecond)\n    fmt.Println(\"[Go]\")\n}\n"
 }
+
+-------------- RUBY --------------
 
 {
   "runtime":"ruby",
@@ -45,9 +62,14 @@ fs.readFile('hello.rb', 'utf8', function(err, data) {
 }
 
 {
-  "runtime": "node",
-  "taskname": "nodeHello",
-  "script": "console.log('\\nHello, world!');\n\nfunction hello() {\n  console.log('[Node JS]');\n}\n\nsetTimeout(hello, 2000);\n"
+  "runtime":"ruby",
+  "taskname": "helloRuby",
+  "script":"puts \"\\nHello, World!\"\nsleep(2)\nputs \"[Ruby]\"\n"
+}
+
+{
+  "runtime":"ruby",
+  "taskname": "helloRuby"
 }
 
 */

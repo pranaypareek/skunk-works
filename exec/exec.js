@@ -64,19 +64,20 @@ function _parseJSON(next) {
 }
 
 function _writeScriptToFile(next) {
+  if (bag.action !== 'create') {
+    return next();
+  }
+
   console.log('Inside ----', _writeScriptToFile.name);
 
   let extension = '';
 
   if (bag.runtime === 'node') {
     extension = '.js';
-    //execFile = 'scripts/tempScript.js';
   } else if (bag.runtime === 'go') {
     extension = '.go';
-    //execFile = 'scripts/tempScript.go';
   } else if (bag.runtime === 'ruby') {
     extension = '.rb';
-    //execFile = 'scripts/tempScript.rb';
   }
 
   bag.taskFile = bag.taskname + extension;
@@ -92,33 +93,39 @@ function _writeScriptToFile(next) {
 }
 
 function _prepareCMD(next) {
-  if (bag.action === 'create') {
+  if (bag.action !== 'run') {
     return next();
   }
 
   console.log('Inside ----', _prepareCMD.name);
 
+  let extension = '';
   bag.cmd = '';
   bag.args = [];
 
   if (bag.runtime === 'node') {
     bag.cmd = 'node';
+    extension = '.js';
   } else if (bag.runtime === 'go') {
     bag.cmd = 'go';
     bag.args.push('run');
+    extension = '.go';
   } else if (bag.runtime === 'ruby') {
     bag.cmd = 'ruby';
+    extension = '.rb';
   }
 
   //the file will always be the last argument in a command
   //eg. (node hello.js) or (go run hello.go) etc
-  bag.args.push(bag.taskFile);
+  let taskFile = bag.taskname + extension;
+
+  bag.args.push('./scripts/'+taskFile);
   return next();
 }
 
 //spawn the child process and execute the script
 function _spawnChild(next) {
-  if (bag.action === 'create') {
+  if (bag.action !== 'run') {
     return next();
   }
 

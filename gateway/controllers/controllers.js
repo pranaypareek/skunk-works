@@ -8,7 +8,7 @@ exports.echoReq = function(req, res) {
   res.send('OK');
 };
 
-exports.publishReq = function(req, res) {
+exports.runTaskScript = function(req, res) {
   const reqBody = req.body;
   console.log('Connecting to queue...\n');
 
@@ -48,7 +48,7 @@ exports.publishReq = function(req, res) {
   });
 };
 
-exports.createTaskScripts = function(req, res) {
+exports.createTaskScript = function(req, res) {
   const reqBody = req.body;
   console.log('Publishing request to create task file...\n');
 
