@@ -11,7 +11,8 @@ let bag = {};
 
 async.retry({ times: 32, interval: 500 }, function(next) {
     console.log('Retrying...');
-    amqp.connect('amqp://172.20.0.1', function(err, conn) {
+    //amqp.connect('amqp://172.20.0.1', function(err, conn) {
+    amqp.connect('amqp://localhost', function(err, conn) {
       if (err) {
         next(err);
       } else {
@@ -56,25 +57,34 @@ function _parseJSON(next) {
   bag.runtime = reqBody.runtime;
   bag.script = reqBody.script;
   bag.resQ = reqBody.queue;
+  bag.action = reqBody.action;
+  bag.taskname = reqBody.taskname;
+
   return next();
 }
 
 function _writeScriptToFile(next) {
   console.log('Inside ----', _writeScriptToFile.name);
 
-  let execFile = '';
+  let extension = '';
 
   if (bag.runtime === 'node') {
-    execFile = 'scripts/tempScript.js';
+    extension = '.js';
+    //execFile = 'scripts/tempScript.js';
   } else if (bag.runtime === 'go') {
-    execFile = 'scripts/tempScript.go';
+    extension = '.go';
+    //execFile = 'scripts/tempScript.go';
   } else if (bag.runtime === 'ruby') {
-    execFile = 'scripts/tempScript.rb';
+    extension = '.rb';
+    //execFile = 'scripts/tempScript.rb';
   }
 
-  bag.execFile = execFile;
+  bag.taskFile = bag.taskname + extension;
 
-  fs.writeFile(bag.execFile, bag.script, function(err) {
+  bag.result = 'Created new script ' + bag.taskFile + ' for task: ' +
+    bag.taskname;
+
+  fs.writeFile('./scripts/' + bag.taskFile, bag.script, function(err) {
     if (err) return console.log(err);
     console.log('Written to disk!');
     return next();
@@ -82,6 +92,10 @@ function _writeScriptToFile(next) {
 }
 
 function _prepareCMD(next) {
+  if (bag.action === 'create') {
+    return next();
+  }
+
   console.log('Inside ----', _prepareCMD.name);
 
   bag.cmd = '';
@@ -98,12 +112,16 @@ function _prepareCMD(next) {
 
   //the file will always be the last argument in a command
   //eg. (node hello.js) or (go run hello.go) etc
-  bag.args.push(bag.execFile);
+  bag.args.push(bag.taskFile);
   return next();
 }
 
 //spawn the child process and execute the script
 function _spawnChild(next) {
+  if (bag.action === 'create') {
+    return next();
+  }
+
   console.log('Inside ----', _spawnChild.name);
 
   console.log('\n------------------');
@@ -126,7 +144,8 @@ function _spawnChild(next) {
 function _publishResult(next) {
   console.log('Inside ----', _publishResult.name);
 
-  amqp.connect('amqp://172.20.0.1', function(err, conn) {
+  //amqp.connect('amqp://172.20.0.1', function(err, conn) {
+  amqp.connect('amqp://localhost', function(err, conn) {
     conn.createChannel(function(err, ch) {
       const resQ = bag.resQ;
 

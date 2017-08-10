@@ -44,4 +44,10 @@ fs.readFile('hello.rb', 'utf8', function(err, data) {
   "script":"puts \"\\nHello, World!\"\nsleep(5)\nputs \"[Ruby]\"\n"
 }
 
+{
+  "runtime": "node",
+  "taskname": "nodeHello",
+  "script": "console.log('\\nHello, world!');\n\nfunction hello() {\n  console.log('[Node JS]');\n}\n\nsetTimeout(hello, 2000);\n"
+}
+
 */
