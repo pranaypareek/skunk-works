@@ -4,15 +4,15 @@ const amqp = require('amqplib/callback_api');
 const async = require('async');
 const fs = require('fs');
 const _ = require('underscore');
-
 const child_process = require('child_process');
+
+const amqpUrl = 'amqp://172.20.0.1';
 
 let bag = {};
 
 async.retry({ times: 32, interval: 500 }, function(next) {
     console.log('Retrying...');
-    //amqp.connect('amqp://172.20.0.1', function(err, conn) {
-    amqp.connect('amqp://localhost', function(err, conn) {
+    amqp.connect(amqpUrl, function(err, conn) {
       if (err) {
         next(err);
       } else {
@@ -151,8 +151,7 @@ function _spawnChild(next) {
 function _publishResult(next) {
   console.log('Inside ----', _publishResult.name);
 
-  //amqp.connect('amqp://172.20.0.1', function(err, conn) {
-  amqp.connect('amqp://localhost', function(err, conn) {
+  amqp.connect(amqpUrl, function(err, conn) {
     conn.createChannel(function(err, ch) {
       const resQ = bag.resQ;
 

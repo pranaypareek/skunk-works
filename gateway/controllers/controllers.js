@@ -2,6 +2,7 @@
 
 const amqp = require('amqplib/callback_api');
 const uuidv1 = require('uuid/v1');
+const amqpUrl = 'amqp://172.20.0.1';
 
 exports.echoReq = function(req, res) {
   console.log('Received GET:\n', req);
@@ -13,8 +14,7 @@ exports.runTaskScript = function(req, res) {
   console.log('Connecting to queue...\n');
 
   //add retry logic
-  //amqp.connect('amqp://172.20.0.1', function(err, conn) {
-  amqp.connect('amqp://localhost', function(err, conn) {
+  amqp.connect(amqpUrl, function(err, conn) {
     conn.createChannel(function(err, ch) {
       const q = 'exec';
       const resQ = uuidv1();
@@ -52,7 +52,7 @@ exports.createTaskScript = function(req, res) {
   const reqBody = req.body;
   console.log('Publishing request to create task file...\n');
 
-  amqp.connect('amqp://localhost', function(err, conn) {
+  amqp.connect(amqpUrl, function(err, conn) {
     conn.createChannel(function(err, ch) {
       const q = 'exec';
       const resQ = uuidv1();
