@@ -12,4 +12,4 @@ then
 fi
 
 echo "Bringing up environment..."
-docker-compose up --scale exec=2
+docker-compose up

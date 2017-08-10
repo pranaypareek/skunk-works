@@ -3,5 +3,9 @@
     "amqplib": "^0.5.1",
     "async": "*",
     "underscore": "*"
+  },
+  "scripts": {
+    "start": "forever start exec.js && forever logs -f exec.js",
+    "stop": "forever stop exec.js"
   }
 }

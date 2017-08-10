@@ -1,5 +1,6 @@
 echo "Stopping all containers..."
 docker-compose down
+docker stop -t=0 `docker ps -aq`
 
 echo "Removing stale containers..."
 docker rm `docker ps -aq`
