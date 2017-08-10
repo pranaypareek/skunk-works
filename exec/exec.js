@@ -135,7 +135,9 @@ function _spawnChild(next) {
   console.log('Executing:', bag.cmd, bag.args);
   console.log('------------------');
 
+  console.time('exec');
   const result = child_process.spawnSync(bag.cmd, bag.args);
+  console.timeEnd('exec');
 
   bag.result = result.stdout.toString();
 
