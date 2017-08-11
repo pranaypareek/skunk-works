@@ -49,6 +49,17 @@ fs.readFile('hello.rb', 'utf8', function(err, data) {
   "script":"package main\n\nimport (\n  \"fmt\"\n  \"time\"\n)\n\nfunc main() {\n    fmt.Println(\"\\nHello, World!\")\n    time.Sleep(5000 * time.Millisecond)\n    fmt.Println(\"[Go]\")\n}\n"
 }
 
+{
+  "runtime": "go",
+  "taskname": "goHello",
+  "script":"package main\n\nimport (\n  \"fmt\"\n  \"time\"\n)\n\nfunc main() {\n    fmt.Println(\"\\nHello, World!\")\n    time.Sleep(5000 * time.Millisecond)\n    fmt.Println(\"[Go]\")\n}\n"
+}
+
+{
+  "runtime": "go",
+  "taskname": "goHello"
+}
+
 -------------- RUBY --------------
 
 {
