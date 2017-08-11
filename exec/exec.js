@@ -35,32 +35,61 @@ async.retry({ times: 32, interval: 500 }, function(next) {
         console.log('-------------------------------------------\n');
 
         ch.consume(q, function(msg) {
-          bag.msg = msg;
+          const reqBody = JSON.parse(msg.content.toString());
 
-          async.series([
-            _parseJSON,
-            _writeScriptToFile,
-            _prepareCMD,
-            _spawnChild,
-            _publishResult
-          ]);
+          bag.runtime = reqBody.runtime;
+          bag.script = reqBody.script;
+          bag.resQ = reqBody.queue;
+          bag.action = reqBody.action;
+          bag.taskname = reqBody.taskname;
+
+          if (bag.action === 'list') {
+            async.series([
+              _listExistingTasks,
+              _publishResult
+            ]);
+          } else {
+            async.series([
+              _writeScriptToFile,
+              _prepareCMD,
+              _spawnChild,
+              _publishResult
+            ]);
+          }
         }, { noAck: true });
       });
     }
   });
 
-function _parseJSON(next) {
-  console.log('Inside ----', _parseJSON.name);
+function _listExistingTasks(next) {
+  console.log('Inside ----', _listExistingTasks.name);
 
-  const reqBody = JSON.parse(bag.msg.content.toString());
+  const scriptsDir = './scripts/';
+  bag.result = {
+    tasks: []
+  };
 
-  bag.runtime = reqBody.runtime;
-  bag.script = reqBody.script;
-  bag.resQ = reqBody.queue;
-  bag.action = reqBody.action;
-  bag.taskname = reqBody.taskname;
+  fs.readdir(scriptsDir, function(err, files) {
+    _.each(files, function(fileName) {
+      let extension = fileName.split('.')[1];
+      let runtime = '';
 
-  return next();
+      if (extension === 'js') {
+        runtime = 'node';
+      } else if (extension === 'go') {
+        runtime = 'go';
+      } else if (extension === 'rb') {
+        runtime = 'ruby';
+      }
+
+      let taskObj = {
+        taskname: fileName.split('.')[0],
+        runtime: runtime
+      };
+      bag.result.tasks.push(taskObj);
+    });
+    return next();
+  });
 }
 
 function _writeScriptToFile(next) {
@@ -119,7 +148,7 @@ function _prepareCMD(next) {
   //eg. (node hello.js) or (go run hello.go) etc
   let taskFile = bag.taskname + extension;
 
-  bag.args.push('./scripts/'+taskFile);
+  bag.args.push('./scripts/' + taskFile);
   return next();
 }
 
