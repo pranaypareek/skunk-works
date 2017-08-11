@@ -4,7 +4,7 @@ const controllers = require('../controllers/controllers.js');
 
 module.exports = function(app) {
   app.route('/tasks')
-    .get(controllers.echoReq)
+    .get(controllers.getTasks)
     .post(controllers.createTaskScript);
 
   app.route('/tasks/run')

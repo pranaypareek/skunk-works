@@ -2,11 +2,41 @@
 
 const amqp = require('amqplib/callback_api');
 const uuidv1 = require('uuid/v1');
+const fs = require('fs');
+const _ = require('underscore');
+
 const amqpUrl = 'amqp://172.20.0.1';
 
-exports.echoReq = function(req, res) {
-  console.log('Received GET:\n', req);
-  res.send('OK');
+//reads the script folder and parses the tasknames and
+//associated runtimes
+exports.getTasks = function(req, res) {
+  const scriptsDir = '../exec/scripts/';
+  let result = {
+    tasks: []
+  };
+
+  fs.readdir(scriptsDir, function(err, files) {
+    _.each(files, function(fileName) {
+      let extension = fileName.split('.')[1];
+      let runtime = '';
+
+      if (extension === 'js') {
+        runtime = 'node';
+      } else if (extension === 'go') {
+        runtime = 'go';
+      } else if (extension === 'rb') {
+        runtime = 'ruby';
+      }
+
+      let taskObj = {
+        taskname: fileName.split('.')[0],
+        runtime: runtime
+      }
+      result.tasks.push(taskObj);
+    });
+
+    res.send(result);
+  });
 };
 
 exports.runTaskScript = function(req, res) {
