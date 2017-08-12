@@ -195,11 +195,13 @@ function _spawnChild(next) {
   console.log('Executing:', bag.cmd, bag.args);
   console.log('------------------');
 
-  console.time('exec');
+  let startTime = new Date();
   const result = child_process.spawnSync(bag.cmd, bag.args);
-  console.timeEnd('exec');
+  let endTime = new Date();
 
-  bag.result = result.stdout.toString();
+  bag.result = {};
+  bag.result.output = result.stdout.toString();
+  bag.result.executionTime = (endTime - startTime) + 'ms';
 
   console.log(bag.result);
 
