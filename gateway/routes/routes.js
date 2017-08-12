@@ -9,4 +9,7 @@ module.exports = function(app) {
 
   app.route('/tasks/run')
     .post(controllers.runTaskScript);
+
+  app.route('/tasks/:name')
+    .delete(controllers.deleteTask);
 };

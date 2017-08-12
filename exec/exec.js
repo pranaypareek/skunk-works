@@ -48,6 +48,11 @@ async.retry({ times: 32, interval: 500 }, function(next) {
               _listExistingTasks,
               _publishResult
             ]);
+          } else if (bag.action === 'delete') {
+            async.series([
+              _deleteTask,
+              _publishResult
+            ]);
           } else {
             async.series([
               _writeScriptToFile,
@@ -88,6 +93,32 @@ function _listExistingTasks(next) {
       };
       bag.result.tasks.push(taskObj);
     });
+    return next();
+  });
+}
+
+function _deleteTask(next) {
+  console.log('Inside ----', _deleteTask.name);
+
+  let extension = '';
+
+  if (bag.runtime === 'node') {
+    extension = '.js';
+  } else if (bag.runtime === 'go') {
+    extension = '.go';
+  } else if (bag.runtime === 'ruby') {
+    extension = '.rb';
+  }
+
+  let taskFile = bag.taskname + extension;
+
+  fs.unlink('./scripts/' + taskFile, function (err) {
+    if (err) {
+      bag.result = 'Error deleting task: ' + bag.taskname;
+    } else {
+      console.log('Successfully deleted: ' + taskFile);
+      bag.result = 'Successfully deleted: ' + taskFile;
+    }
     return next();
   });
 }
