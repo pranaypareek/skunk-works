@@ -1,4 +1,4 @@
-FROM node:boron
+FROM pranay/exec:latest
 
 WORKDIR /usr/src/app
 
@@ -8,7 +8,8 @@ RUN apt-get update
 RUN apt-get install -y ruby-full
 RUN apt-get install -y golang-go
 RUN npm install
+RUN npm install -g forever
 
 COPY . .
 
-CMD [ "node", "exec.js" ]
+CMD [ "npm", "start" ]
