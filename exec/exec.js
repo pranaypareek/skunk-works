@@ -7,7 +7,14 @@ const _ = require('underscore');
 const child_process = require('child_process');
 const file = require('./common/fileUtilities.js');
 
-const amqpUrl = 'amqp://172.20.0.1';
+
+const workflows = {
+  'list': require('./workflows/listExistingTasks.js')
+}
+
+
+//const amqpUrl = 'amqp://172.20.0.1';
+const amqpUrl = 'amqp://localhost';
 
 let bag = {};
 
@@ -36,8 +43,13 @@ async.retry({ times: 32, interval: 500 }, function(next) {
         console.log('-------------------------------------------\n');
 
         ch.consume(q, function(msg) {
-          const reqBody = JSON.parse(msg.content.toString());
+          bag.msg = msg;
 
+          async.series([
+            _parseJSON,
+            _triggerWorkflow
+          ]);
+          /*
           bag.runtime = reqBody.runtime;
           bag.script = reqBody.script;
           bag.resQ = reqBody.queue;
@@ -61,11 +73,42 @@ async.retry({ times: 32, interval: 500 }, function(next) {
               _spawnChild,
               _publishResult
             ]);
-          }
+          }*/
         }, { noAck: true });
       });
     }
   });
+
+function _parseJSON(next) {
+  console.log('Inside ----', _parseJSON.name);
+  const reqBody = JSON.parse(bag.msg.content.toString());
+
+  bag.runtime = reqBody.runtime;
+  bag.script = reqBody.script;
+  bag.resQ = reqBody.queue;
+  bag.action = reqBody.action;
+  bag.taskname = reqBody.taskname;
+  bag.result = {};
+
+  bag = _.omit(bag, 'msg');
+  return next();
+}
+
+function _triggerWorkflow(next) {
+  console.log('Inside ----', _triggerWorkflow.name);
+
+  if (bag.action === 'list') {
+    workflows.list.listExistingTasks(bag);
+  } else if (bag.action === 'create') {
+    console.log('the workflow is create');
+  } else if (bag.action === 'run') {
+    console.log('the workflow is run');
+  } else if (bag.action === 'delete') {
+    console.log('the workflow is delete');
+  }
+
+  return next();
+}
 
 function _listExistingTasks(next) {
   console.log('Inside ----', _listExistingTasks.name);
