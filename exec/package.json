@@ -5,7 +5,7 @@
     "underscore": "*"
   },
   "scripts": {
-    "start": "forever start exec.js && forever logs -f exec.js",
+    "start": "forever start -w exec.js && forever logs -f exec.js",
     "stop": "forever stop exec.js"
   }
 }

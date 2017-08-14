@@ -2,6 +2,8 @@ August 14, 2017
 
 * Refactor exec.js: move different workflows to files of their own
 * Refactor controllers.js: move all controllers to their own files
+* Add GET /tasks/:name route to return info about task (size, runtime, name)
+* Refactor POST /tasks/run to POST /tasks/:name/run (only send runtime in the reqBody)
+
 * Figure out deployment: cloudformation/consul/terraform etc.
 * Read up on Unikernels: http://unikernel.org/files/2014-cacm-unikernels.pdf
-

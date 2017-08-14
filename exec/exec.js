@@ -5,6 +5,7 @@ const async = require('async');
 const fs = require('fs');
 const _ = require('underscore');
 const child_process = require('child_process');
+const file = require('./common/fileUtilities.js');
 
 const amqpUrl = 'amqp://172.20.0.1';
 
@@ -79,13 +80,7 @@ function _listExistingTasks(next) {
       let extension = fileName.split('.')[1];
       let runtime = '';
 
-      if (extension === 'js') {
-        runtime = 'node';
-      } else if (extension === 'go') {
-        runtime = 'go';
-      } else if (extension === 'rb') {
-        runtime = 'ruby';
-      }
+      runtime = file.returnFileRuntime(extension);
 
       let taskObj = {
         taskname: fileName.split('.')[0],
@@ -102,17 +97,11 @@ function _deleteTask(next) {
 
   let extension = '';
 
-  if (bag.runtime === 'node') {
-    extension = '.js';
-  } else if (bag.runtime === 'go') {
-    extension = '.go';
-  } else if (bag.runtime === 'ruby') {
-    extension = '.rb';
-  }
+  extension = file.returnFileExtension(bag.runtime);
 
   let taskFile = bag.taskname + extension;
 
-  fs.unlink('./scripts/' + taskFile, function (err) {
+  fs.unlink('./scripts/' + taskFile, function(err) {
     if (err) {
       bag.result = 'Error deleting task: ' + bag.taskname;
     } else {
@@ -132,13 +121,7 @@ function _writeScriptToFile(next) {
 
   let extension = '';
 
-  if (bag.runtime === 'node') {
-    extension = '.js';
-  } else if (bag.runtime === 'go') {
-    extension = '.go';
-  } else if (bag.runtime === 'ruby') {
-    extension = '.rb';
-  }
+  extension = file.returnFileExtension(bag.runtime);
 
   bag.taskFile = bag.taskname + extension;
 
@@ -165,16 +148,14 @@ function _prepareCMD(next) {
 
   if (bag.runtime === 'node') {
     bag.cmd = 'node';
-    extension = '.js';
   } else if (bag.runtime === 'go') {
     bag.cmd = 'go';
-    bag.args.push('run');
-    extension = '.go';
+    bag.args.push('run');;
   } else if (bag.runtime === 'ruby') {
     bag.cmd = 'ruby';
-    extension = '.rb';
   }
 
+  extension = file.returnFileExtension(bag.runtime);
   //the file will always be the last argument in a command
   //eg. (node hello.js) or (go run hello.go) etc
   let taskFile = bag.taskname + extension;
