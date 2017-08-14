@@ -8,7 +8,8 @@ const child_process = require('child_process');
 const file = require('./common/fileUtilities.js');
 
 const workflows = {
-  'list': require('./workflows/listExistingTasks.js')
+  'list': require('./workflows/listExistingTasks.js'),
+  'delete': require('./workflows/deleteTask.js')
 }
 
 const amqpUrl = process.env.AMQP_URL;
@@ -41,12 +42,12 @@ async.retry({ times: 32, interval: 500 }, function(next) {
 
         ch.consume(q, function(msg) {
           bag.msg = msg;
-
+          /*
           async.series([
             _parseJSON,
             _triggerWorkflow
-          ]);
-          /*
+          ]);*/
+          const reqBody = JSON.parse(bag.msg.content.toString());
           bag.runtime = reqBody.runtime;
           bag.script = reqBody.script;
           bag.resQ = reqBody.queue;
@@ -70,7 +71,7 @@ async.retry({ times: 32, interval: 500 }, function(next) {
               _spawnChild,
               _publishResult
             ]);
-          }*/
+          }
         }, { noAck: true });
       });
     }
@@ -101,7 +102,7 @@ function _triggerWorkflow(next) {
   } else if (bag.action === 'run') {
     console.log('the workflow is run');
   } else if (bag.action === 'delete') {
-    console.log('the workflow is delete');
+    workflows.delete.deleteTask(bag);
   }
 
   return next();
