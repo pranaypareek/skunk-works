@@ -1,0 +1,7 @@
+August 14, 2017
+
+* Refactor exec.js: move different workflows to files of their own
+* Refactor controllers.js: move all controllers to their own files
+* Figure out deployment: cloudformation/consul/terraform etc.
+* Read up on Unikernels: http://unikernel.org/files/2014-cacm-unikernels.pdf
+
