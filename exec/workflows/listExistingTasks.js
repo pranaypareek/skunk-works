@@ -20,7 +20,7 @@ exports.listExistingTasks = function(bag) {
 };
 
 function _listExistingTasks (next) {
-  console.log('Inside ----', _listExistingTasks.name);
+  console.log('Inside ----', store.action + '|' + _listExistingTasks.name);
 
   const scriptsDir = './scripts/';
   store.result = {
@@ -45,7 +45,7 @@ function _listExistingTasks (next) {
 }
 
 function _publishResult(next) {
-  console.log('Inside ----', _publishResult.name);
+  console.log('Inside ----', store.action + '|' + _publishResult.name);
 
   amqp.connect(amqpUrl, function(err, conn) {
     conn.createChannel(function(err, ch) {

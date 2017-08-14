@@ -21,7 +21,7 @@ exports.createTask = function(bag) {
 };
 
 function _writeScriptToFile(next) {
-  console.log('Inside ----', _writeScriptToFile.name);
+  console.log('Inside ----', store.action + '|' + _writeScriptToFile.name);
 
   let extension = '';
 

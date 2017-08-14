@@ -10,7 +10,8 @@ const file = require('./common/fileUtilities.js');
 const workflows = {
   'list': require('./workflows/listExistingTasks.js'),
   'delete': require('./workflows/deleteTask.js'),
-  'create': require('./workflows/createTask.js')
+  'create': require('./workflows/createTask.js'),
+  'run': require('./workflows/runTask.js')
 };
 
 const amqpUrl = process.env.AMQP_URL;
@@ -102,7 +103,7 @@ function _triggerWorkflow(next) {
   } else if (bag.action === 'create') {
     workflows.create.createTask(bag);
   } else if (bag.action === 'run') {
-    console.log('the workflow is run');
+    workflows.run.runTask(bag);
   } else if (bag.action === 'delete') {
     workflows.delete.deleteTask(bag);
   }
