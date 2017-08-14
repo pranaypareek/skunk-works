@@ -9,8 +9,9 @@ const file = require('./common/fileUtilities.js');
 
 const workflows = {
   'list': require('./workflows/listExistingTasks.js'),
-  'delete': require('./workflows/deleteTask.js')
-}
+  'delete': require('./workflows/deleteTask.js'),
+  'create': require('./workflows/createTask.js')
+};
 
 const amqpUrl = process.env.AMQP_URL;
 
@@ -42,11 +43,12 @@ async.retry({ times: 32, interval: 500 }, function(next) {
 
         ch.consume(q, function(msg) {
           bag.msg = msg;
-          /*
+
           async.series([
             _parseJSON,
             _triggerWorkflow
-          ]);*/
+          ]);
+          /*
           const reqBody = JSON.parse(bag.msg.content.toString());
           bag.runtime = reqBody.runtime;
           bag.script = reqBody.script;
@@ -71,7 +73,7 @@ async.retry({ times: 32, interval: 500 }, function(next) {
               _spawnChild,
               _publishResult
             ]);
-          }
+          }*/
         }, { noAck: true });
       });
     }
@@ -98,7 +100,7 @@ function _triggerWorkflow(next) {
   if (bag.action === 'list') {
     workflows.list.listExistingTasks(bag);
   } else if (bag.action === 'create') {
-    console.log('the workflow is create');
+    workflows.create.createTask(bag);
   } else if (bag.action === 'run') {
     console.log('the workflow is run');
   } else if (bag.action === 'delete') {
@@ -191,7 +193,7 @@ function _prepareCMD(next) {
     bag.cmd = 'node';
   } else if (bag.runtime === 'go') {
     bag.cmd = 'go';
-    bag.args.push('run');;
+    bag.args.push('run');
   } else if (bag.runtime === 'ruby') {
     bag.cmd = 'ruby';
   }
