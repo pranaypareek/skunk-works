@@ -5,8 +5,7 @@ const uuidv1 = require('uuid/v1');
 const fs = require('fs');
 const _ = require('underscore');
 
-//const amqpUrl = 'amqp://172.20.0.1';
-const amqpUrl = 'amqp://localhost';
+const amqpUrl = process.env.AMQP_URL;
 
 //reads the script folder and parses the tasknames and
 //associated runtimes

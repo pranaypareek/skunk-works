@@ -7,14 +7,11 @@ const _ = require('underscore');
 const child_process = require('child_process');
 const file = require('./common/fileUtilities.js');
 
-
 const workflows = {
   'list': require('./workflows/listExistingTasks.js')
 }
 
-
-//const amqpUrl = 'amqp://172.20.0.1';
-const amqpUrl = 'amqp://localhost';
+const amqpUrl = process.env.AMQP_URL;
 
 let bag = {};
 

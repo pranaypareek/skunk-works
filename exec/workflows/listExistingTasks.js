@@ -6,7 +6,7 @@ const fs = require('fs');
 const _ = require('underscore');
 const file = require('../common/fileUtilities.js');
 
-const amqpUrl = 'amqp://localhost';
+const amqpUrl = process.env.AMQP_URL;
 
 let store = {};
 
