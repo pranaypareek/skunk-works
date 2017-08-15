@@ -11,7 +11,8 @@ const workflows = {
   'list': require('./workflows/listExistingTasks.js'),
   'delete': require('./workflows/deleteTask.js'),
   'create': require('./workflows/createTask.js'),
-  'run': require('./workflows/runTask.js')
+  'run': require('./workflows/runTask.js'),
+  'info': require('./workflows/getTaskInfo.js')
 };
 
 const amqpUrl = process.env.AMQP_URL;
@@ -63,6 +64,7 @@ function _parseJSON(next) {
   bag.resQ = reqBody.queue;
   bag.action = reqBody.action;
   bag.taskname = reqBody.taskname;
+  bag.query = reqBody.query;
   bag.result = {};
 
   bag = _.omit(bag, 'msg');
@@ -80,6 +82,8 @@ function _triggerWorkflow(next) {
     workflows.run.runTask(bag);
   } else if (bag.action === 'delete') {
     workflows.delete.deleteTask(bag);
+  } else if (bag.action === 'info') {
+    workflows.info.getTaskInfo(bag);
   }
 
   return next();

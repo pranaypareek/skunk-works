@@ -12,4 +12,7 @@ module.exports = function(app) {
 
   app.route('/tasks/:name')
     .delete(controllers.deleteTask);
+
+  app.route('/tasks/:name/info')
+    .get(controllers.getTaskInfo);
 };
