@@ -61,6 +61,7 @@ exports.runTaskScript = function(req, res) {
 
       msg.queue = resQ;
       msg.action = 'run';
+      msg.taskname = req.params.name;
 
       ch.assertQueue(q, { durable: false });
       ch.assertQueue(resQ, { durable: false });
