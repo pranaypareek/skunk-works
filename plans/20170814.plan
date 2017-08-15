@@ -7,3 +7,12 @@ August 14, 2017
 
 * Figure out deployment: cloudformation/consul/terraform etc.
 * Read up on Unikernels: http://unikernel.org/files/2014-cacm-unikernels.pdf
+
+------
+
+Done:
+
++ Refactored exec.js, moving all workflows to files of their own
++ Added GET /tasks/:name/info route to return script info
++ Updated POST /tasks/run to POST /tasks/:name/run
++ Updated both services to find AMQP_URL from env vars
