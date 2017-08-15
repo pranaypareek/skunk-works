@@ -7,12 +7,12 @@ module.exports = function(app) {
     .get(controllers.getTasks)
     .post(controllers.createTaskScript);
 
-  app.route('/tasks/run')
-    .post(controllers.runTaskScript);
-
   app.route('/tasks/:name')
     .delete(controllers.deleteTask);
 
   app.route('/tasks/:name/info')
     .get(controllers.getTaskInfo);
+
+  app.route('/tasks/:name/run')
+    .post(controllers.runTaskScript);
 };

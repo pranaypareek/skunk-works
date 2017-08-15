@@ -10,7 +10,6 @@ const file = require('../common/fileUtilities.js');
 const amqpUrl = process.env.AMQP_URL;
 
 let store = {};
-const dir = process.cwd();
 
 exports.runTask = function(bag) {
   store = bag;
