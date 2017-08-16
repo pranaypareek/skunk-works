@@ -5,7 +5,8 @@ const controllers = require('../controllers/controllers.js');
 const ctrl = {
   getTasks: require('../controllers/getTasks.js'),
   createTaskScript: require('../controllers/createTaskScript.js'),
-  deleteTask: require('../controllers/deleteTask.js')
+  deleteTask: require('../controllers/deleteTask.js'),
+  getTaskInfo: require('../controllers/getTaskInfo.js')
 }
 
 module.exports = function(app) {
@@ -17,7 +18,7 @@ module.exports = function(app) {
     .delete(ctrl.deleteTask);
 
   app.route('/tasks/:name/info')
-    .get(controllers.getTaskInfo);
+    .get(ctrl.getTaskInfo);
 
   app.route('/tasks/:name/run')
     .post(controllers.runTaskScript);

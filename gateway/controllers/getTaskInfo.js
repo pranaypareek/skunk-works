@@ -7,32 +7,31 @@ const _ = require('underscore');
 
 const amqpUrl = process.env.AMQP_URL;
 
-exports.runTaskScript = function(req, res) {
-  const reqBody = req.body;
-  console.log('Connecting to queue...\n');
+module.exports = function(req, res) {
 
   //add retry logic
   amqp.connect(amqpUrl, function(err, conn) {
     conn.createChannel(function(err, ch) {
       const q = 'exec';
       const resQ = uuidv1();
-      const msg = reqBody;
+      const msg = {};
 
       msg.queue = resQ;
-      msg.action = 'run';
+      msg.action = 'info';
       msg.taskname = req.params.name;
+      msg.query = req.query;
 
       ch.assertQueue(q, { durable: false });
       ch.assertQueue(resQ, { durable: false });
 
       ch.sendToQueue(q, new Buffer(JSON.stringify(msg)));
-      console.log('Published:\n', JSON.stringify(reqBody));
+      console.log('Published:\n', JSON.stringify(msg));
 
       ch.consume(resQ, function(msg) {
         var execResponse = JSON.parse(msg.content.toString());
         console.log('Received msg from exec', execResponse.result);
         var response = {
-          'result': execResponse.result
+          'info': execResponse.result
         };
 
         //TODO: add conn.close() here
