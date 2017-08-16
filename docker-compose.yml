@@ -11,6 +11,8 @@ services:
       - 'rabbitmq'
     networks:
       - app-tier
+    environment:
+      - AMQP_URL=amqp://172.20.0.1
 
   gateway:
     image: 'pranay/gateway'
@@ -19,6 +21,8 @@ services:
       - 'rabbitmq'
     networks:
       - app-tier
+    environment:
+      - AMQP_URL=amqp://172.20.0.1
     ports:
       - 50000:3000
 

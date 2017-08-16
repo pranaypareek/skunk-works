@@ -1,0 +1,16 @@
+August 15, 2017
+
+* Read up on Unikernels: http://unikernel.org/files/2014-cacm-unikernels.pdf
+* Refactor controller.js: move all controllers to their own files
+* Figure out deployment strategy (cloudformation/consul/terraform etc)
+
+----------------------------
+Happy 70th Independence Day
+----------------------------
+
+Done:
+
++ Read the paper: http://unikernel.org/files/2014-cacm-unikernels.pdf
+And https://www.joyent.com/blog/unikernels-are-unfit-for-production which
+has a highly opinionated argument against unikernels and raises valid
+concerns on why unikernels are not made for production usage.
