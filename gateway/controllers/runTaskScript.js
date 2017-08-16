@@ -7,7 +7,7 @@ const _ = require('underscore');
 
 const amqpUrl = process.env.AMQP_URL;
 
-exports.runTaskScript = function(req, res) {
+module.exports = function(req, res) {
   const reqBody = req.body;
   console.log('Connecting to queue...\n');
 

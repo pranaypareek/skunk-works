@@ -1,24 +1,23 @@
 'use strict';
 
-const controllers = require('../controllers/controllers.js');
-
-const ctrl = {
+const controllers = {
   getTasks: require('../controllers/getTasks.js'),
   createTaskScript: require('../controllers/createTaskScript.js'),
   deleteTask: require('../controllers/deleteTask.js'),
-  getTaskInfo: require('../controllers/getTaskInfo.js')
+  getTaskInfo: require('../controllers/getTaskInfo.js'),
+  runTaskScript: require('../controllers/runTaskScript.js')
 }
 
 module.exports = function(app) {
   app.route('/tasks')
-    .get(ctrl.getTasks)
-    .post(ctrl.createTaskScript);
+    .get(controllers.getTasks)
+    .post(controllers.createTaskScript);
 
   app.route('/tasks/:name')
-    .delete(ctrl.deleteTask);
+    .delete(controllers.deleteTask);
 
   app.route('/tasks/:name/info')
-    .get(ctrl.getTaskInfo);
+    .get(controllers.getTaskInfo);
 
   app.route('/tasks/:name/run')
     .post(controllers.runTaskScript);
