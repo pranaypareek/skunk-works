@@ -1,0 +1,7 @@
+
+------
+
+August 16th, 2017
+
+* Figure out a deployment strategy (cloudformation/consul/terraform etc)
+* Wire up a UI

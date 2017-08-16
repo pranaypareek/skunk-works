@@ -1,3 +1,6 @@
+
+------
+
 August 15, 2017
 
 * Read up on Unikernels: http://unikernel.org/files/2014-cacm-unikernels.pdf
@@ -14,3 +17,4 @@ Done:
 And https://www.joyent.com/blog/unikernels-are-unfit-for-production which
 has a highly opinionated argument against unikernels and raises valid
 concerns on why unikernels are not made for production usage.
++ Refactored controller.js and moved all controllers to their own files

@@ -6,7 +6,7 @@ const controllers = {
   deleteTask: require('../controllers/deleteTask.js'),
   getTaskInfo: require('../controllers/getTaskInfo.js'),
   runTaskScript: require('../controllers/runTaskScript.js')
-}
+};
 
 module.exports = function(app) {
   app.route('/tasks')
