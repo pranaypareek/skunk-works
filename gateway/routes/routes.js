@@ -2,9 +2,13 @@
 
 const controllers = require('../controllers/controllers.js');
 
+const ctrl = {
+  getTasks: require('../controllers/getTasks.js')
+}
+
 module.exports = function(app) {
   app.route('/tasks')
-    .get(controllers.getTasks)
+    .get(ctrl.getTasks)
     .post(controllers.createTaskScript);
 
   app.route('/tasks/:name')
