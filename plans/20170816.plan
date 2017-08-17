@@ -5,3 +5,7 @@ August 16th, 2017
 
 * Figure out a deployment strategy (cloudformation/consul/terraform etc)
 * Wire up a UI
+
+- Spent day setting up server on the ESXi host
+- Docker compose/machine set up problems
+- i386: 32bit & x86_64: 64 bit DO NOT FORGET ughh
