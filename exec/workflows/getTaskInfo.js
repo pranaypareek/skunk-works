@@ -5,6 +5,7 @@ const async = require('async');
 const fs = require('fs');
 const _ = require('underscore');
 const file = require('../common/fileUtilities.js');
+const glob = require('glob');
 
 const amqpUrl = process.env.AMQP_URL;
 
@@ -16,6 +17,7 @@ exports.getTaskInfo = function(bag) {
 
   async.series([
     _getTaskInfo,
+    _readFileContent,
     _publishResult
   ]);
 };
@@ -23,14 +25,27 @@ exports.getTaskInfo = function(bag) {
 function _getTaskInfo(next) {
   console.log('Inside ----', store.action + '|' + _getTaskInfo.name);
 
-  let extension = '';
-  extension = file.returnFileExtension(store.query.runtime);
+  let taskFileWildCard = './scripts/' + store.taskname + '.*';
 
-  store.taskFile = store.taskname + extension;
-
-  fs.stat('./scripts/' + store.taskFile, function(err, stats) {
+  glob(taskFileWildCard, {}, function(err, files) {
     if (err) return console.log(err);
-    store.result = stats;
+
+    store.fileName = files[0];
+    fs.stat(store.fileName, function(err, stats) {
+      if (err) return console.log(err);
+      store.result = stats;
+      store.result.taskname = store.taskname;
+      store.result.runtime =
+        file.returnFileRuntime(store.fileName.split('.')[2]);
+      return next();
+    });
+  });
+}
+
+function _readFileContent(next) {
+  fs.readFile(store.fileName, 'utf8', function(err, data) {
+    if (err) return console.log(err);
+    store.result.script = data;
     return next();
   });
 }

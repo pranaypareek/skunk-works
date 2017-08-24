@@ -30,9 +30,7 @@ module.exports = function(req, res) {
       ch.consume(resQ, function(msg) {
         var execResponse = JSON.parse(msg.content.toString());
         console.log('Received msg from exec', execResponse.result);
-        var response = {
-          'info': execResponse.result
-        };
+        var response = execResponse.result;
 
         //TODO: add conn.close() here
         res.send(response);

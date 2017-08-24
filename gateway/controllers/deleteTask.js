@@ -9,7 +9,7 @@ const amqpUrl = process.env.AMQP_URL;
 
 module.exports = function(req, res) {
   const reqBody = req.body;
-  console.log('Publishing request to create task file...\n');
+  console.log('Publishing request to delete task file...\n');
 
   amqp.connect(amqpUrl, function(err, conn) {
     conn.createChannel(function(err, ch) {

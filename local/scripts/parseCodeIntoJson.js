@@ -1,16 +1,21 @@
 'use strict';
 
 const fs = require('fs');
+const glob = require('../node_modules/glob');
 
-fs.readFile('hello.rb', 'utf8', function(err, data) {
-  if (err) {
-    return console.log(err);
-  }
-  let res = {
-    'script': data
-  }
-  console.log(JSON.stringify(res));
+glob('helloNode.*', {}, function(er, files) {
+  fs.readFile(files[0], 'utf8', function(err, data) {
+    if (err) {
+      return console.log(err);
+    }
+    let res = {
+      'script': data
+    }
+    console.log(data);
+    console.log(JSON.stringify(res));
+  });
 });
+
 
 /*
 

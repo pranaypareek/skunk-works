@@ -14,10 +14,8 @@ module.exports = function(app) {
     .post(controllers.createTaskScript);
 
   app.route('/tasks/:name')
+    .get(controllers.getTaskInfo)
     .delete(controllers.deleteTask);
-
-  app.route('/tasks/:name/info')
-    .get(controllers.getTaskInfo);
 
   app.route('/tasks/:name/run')
     .post(controllers.runTaskScript);

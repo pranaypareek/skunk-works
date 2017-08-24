@@ -2,7 +2,8 @@
   "dependencies": {
     "amqplib": "^0.5.1",
     "async": "*",
-    "underscore": "*"
+    "underscore": "*",
+    "glob": "*"
   },
   "scripts": {
     "start": "forever start -w exec.js && forever logs -f exec.js",

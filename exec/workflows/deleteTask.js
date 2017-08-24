@@ -4,12 +4,12 @@ const amqp = require('amqplib/callback_api');
 const async = require('async');
 const fs = require('fs');
 const _ = require('underscore');
+const glob = require('glob');
 const file = require('../common/fileUtilities.js');
 
 const amqpUrl = process.env.AMQP_URL;
 
 let store = {};
-const dir = process.cwd();
 
 exports.deleteTask = function(bag) {
   store = bag;
@@ -23,20 +23,22 @@ exports.deleteTask = function(bag) {
 function _deleteTask(next) {
   console.log('Inside ----', store.action + '|' + _deleteTask.name);
 
-  let extension = '';
+  let taskFileWildCard = './scripts/' + store.taskname + '.*';
 
-  extension = file.returnFileExtension(store.runtime);
+  glob(taskFileWildCard, {}, function(err, files) {
+    if (err) return console.log(err);
 
-  let taskFile = store.taskname + extension;
+    store.fileName = files[0];
 
-  fs.unlink('./scripts/' + taskFile, function(err) {
-    if (err) {
-      store.result = 'Error deleting task: ' + store.taskname;
-    } else {
-      console.log('Successfully deleted: ' + taskFile);
-      store.result = 'Successfully deleted: ' + taskFile;
-    }
-    return next();
+    fs.unlink(store.fileName, function(err) {
+      if (err) {
+        store.result = 'Error deleting task: ' + store.taskname;
+      } else {
+        console.log('Successfully deleted: ' + store.taskname);
+        store.result = 'Successfully deleted: ' + store.taskname;
+      }
+      return next();
+    });
   });
 }
 

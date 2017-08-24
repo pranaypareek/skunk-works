@@ -5,7 +5,8 @@
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
     "underscore": "*",
-    "uuid": "^3.1.0"
+    "uuid": "^3.1.0",
+    "cors": "*"
   },
   "scripts": {
     "start": "forever start -w server.js && forever logs -f server.js",
