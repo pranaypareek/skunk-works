@@ -3,7 +3,7 @@
 const fs = require('fs');
 const glob = require('../node_modules/glob');
 
-glob('helloNode.*', {}, function(er, files) {
+glob('notifySms.js', {}, function(er, files) {
   fs.readFile(files[0], 'utf8', function(err, data) {
     if (err) {
       return console.log(err);

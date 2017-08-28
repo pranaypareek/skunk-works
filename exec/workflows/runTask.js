@@ -42,7 +42,12 @@ function _prepareCMD(next) {
   //eg. (node hello.js) or (go run hello.go) etc
   let taskFile = store.taskname + extension;
 
-  store.args.push('./scripts/' + taskFile);
+  if (store.runtime === 'go') {
+    store.args.push('./scripts/' + store.taskname);
+  } else {
+    store.args.push('./scripts/' + taskFile);
+  }
+
   return next();
 }
 
