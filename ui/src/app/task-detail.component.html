@@ -1,0 +1,23 @@
+<div class="container-fluid">
+  <div *ngIf="task">
+    <div>
+      <label>Name:</label>
+    </div>
+    <div>
+      <span>{{task.taskname}}</span>
+    </div>
+    <div>
+      <label>Runtime:</label>
+    </div>
+    <div>
+      <span>{{task.runtime}}</span>
+    </div>
+    <div>
+      <label>Script:</label>
+    </div>
+    <div>
+      <textarea cols="50" rows="20">{{task.script}}</textarea>
+    </div>
+    <button (click)="goBack()">Back</button>
+  </div>
+</div>
