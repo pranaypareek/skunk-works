@@ -7,6 +7,7 @@ networks:
 services:
   exec:
     image: 'pranay/exec'
+    container_name: 'exec'
     depends_on:
       - 'rabbitmq'
     networks:
@@ -25,6 +26,18 @@ services:
       - AMQP_URL=amqp://172.20.0.1
     ports:
       - 50000:3000
+
+  ui:
+    image: 'pranay/ui'
+    container_name: 'ui'
+    depends_on:
+      - 'rabbitmq'
+    networks:
+      - app-tier
+    environment:
+      - AMQP_URL=amqp://172.20.0.1
+    ports:
+      - 50001:3000
 
   rabbitmq:
     image: 'rabbitmq:3'

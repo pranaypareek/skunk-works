@@ -9,6 +9,11 @@ then
     cd exec
     docker build -t pranay/exec .
     cd ..
+
+    echo "Building ui..."
+    cd ui
+    docker build -t pranay/ui .
+    cd ..
 fi
 
 echo "Bringing up environment..."
