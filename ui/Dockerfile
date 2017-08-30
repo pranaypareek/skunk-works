@@ -1,4 +1,4 @@
-FROM node:boron
+FROM pranay/ui:latest
 
 WORKDIR /usr/src/app
 

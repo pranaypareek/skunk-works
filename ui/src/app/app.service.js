@@ -14,7 +14,8 @@ require("rxjs/add/operator/toPromise");
 var AppService = (function () {
     function AppService(http) {
         this.http = http;
-        this.apiUrl = 'http://localhost:50000';
+        // private apiUrl = 'http://localhost:50000';
+        this.apiUrl = 'http://localhost:3000';
         this.headers = new http_1.Headers({ 'Content-Type': 'application/json' });
     }
     ;

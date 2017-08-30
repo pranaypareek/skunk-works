@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Headers, Http, Response } from '@angular/http';
+import { Headers, Http } from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 
@@ -7,7 +7,8 @@ import { Task } from './task';
 
 @Injectable()
 export class AppService {
-  private apiUrl = 'http://localhost:50000';
+  // private apiUrl = 'http://localhost:50000';
+  private apiUrl = 'http://localhost:3000';
   private headers = new Headers({'Content-Type': 'application/json'});
 
   constructor(private http: Http) {};

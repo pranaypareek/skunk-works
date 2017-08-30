@@ -6,7 +6,7 @@
     "glob": "*"
   },
   "scripts": {
-    "start": "forever start -w exec.js && forever logs -f exec.js",
+    "start": "node exec.js",
     "stop": "forever stop exec.js"
   }
 }

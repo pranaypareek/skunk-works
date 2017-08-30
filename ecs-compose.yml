@@ -1,0 +1,32 @@
+version: '2'
+
+services:
+  exec:
+    image: 'pranay/exec'
+    mem_limit: 268435456
+    environment:
+      - AMQP_URL=amqp://172.20.0.1
+
+  gateway:
+    image: 'pranay/gateway'
+    mem_limit: 268435456
+    environment:
+      - AMQP_URL=amqp://172.20.0.1
+    ports:
+      - 50000:3000
+
+  ui:
+    image: 'pranay/ui'
+    mem_limit: 268435456
+    environment:
+      - AMQP_URL=amqp://172.20.0.1
+    ports:
+      - 50001:3000
+
+  rabbitmq:
+    image: 'rabbitmq:3'
+    hostname: 'beacon'
+    mem_limit: 268435456
+    ports:
+      - 15672:15672
+      - 5672:5672
