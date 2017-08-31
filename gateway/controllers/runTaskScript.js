@@ -36,9 +36,7 @@ module.exports = function(req, res) {
         };
 
         //TODO: add conn.close() here
-        conn.close();
         res.send(response);
-        process.exit(0);
       });
     });
 

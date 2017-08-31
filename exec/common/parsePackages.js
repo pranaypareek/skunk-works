@@ -12,9 +12,6 @@ exports.parsePackages = function(filename) {
   store.filename = filename;
   store.packages = [];
 
-  //let result = child_process.spawnSync('ls', ['-la']);
-  //console.log(result.stdout.toString());
-
   async.series([
     _parseFilePackages,
     _createJSON,

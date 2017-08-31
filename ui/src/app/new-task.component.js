@@ -19,12 +19,16 @@ var NewTaskComponent = (function () {
         this.model = {
             taskname: '',
             runtime: '',
-            script: ''
+            script: '',
+            chainedNext: ''
         };
         this.tasks = [];
         this.submitted = false;
     }
     ;
+    NewTaskComponent.prototype.ngOnInit = function () {
+        this.getTasks();
+    };
     NewTaskComponent.prototype.onSubmit = function () {
         var _this = this;
         if (this.model.runtime === 'Ruby 2.1.5') {
@@ -43,6 +47,14 @@ var NewTaskComponent = (function () {
             _this.router.navigate(['/tasks']);
         });
     };
+    NewTaskComponent.prototype.getTasks = function () {
+        var _this = this;
+        this.appService
+            .getTasks()
+            .then(function (tasks) {
+            _this.tasks = tasks;
+        });
+    };
     Object.defineProperty(NewTaskComponent.prototype, "diagnostic", {
         // TODO: Remove this when we're done
         get: function () { return JSON.stringify(this.model); },
@@ -53,8 +65,22 @@ var NewTaskComponent = (function () {
         this.model = {
             taskname: '',
             runtime: '',
-            script: ''
+            script: '',
+            chainedNext: ''
         };
+        this.submitted = true;
+        this.router.navigate(['/tasks']);
+    };
+    NewTaskComponent.prototype.extension = function (runtime) {
+        if (runtime === 'node') {
+            return '.js';
+        }
+        else if (runtime === 'ruby') {
+            return '.rb';
+        }
+        else if (runtime === 'go') {
+            return '.go';
+        }
     };
     return NewTaskComponent;
 }());

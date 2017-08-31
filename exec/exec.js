@@ -65,6 +65,8 @@ function _parseJSON(next) {
   bag.action = reqBody.action;
   bag.taskname = reqBody.taskname;
   bag.query = reqBody.query;
+  bag.chainedNext = reqBody.chainedNext;
+
   bag.result = {};
 
   bag = _.omit(bag, 'msg');

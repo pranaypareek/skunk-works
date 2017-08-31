@@ -3,12 +3,10 @@
 const amqp = require('amqplib/callback_api');
 const async = require('async');
 const fs = require('fs');
+const glob = require('glob');
 const _ = require('underscore');
 const child_process = require('child_process');
 const file = require('../common/fileUtilities.js');
-
-const glob = require('../node_modules/glob');
-const nodeNativePkgs = require('../common/nativePkgs');
 
 const amqpUrl = process.env.AMQP_URL;
 const util = require('util');
@@ -20,9 +18,8 @@ exports.runTask = function(bag) {
 
   async.series([
     _prepareCMD,
-    _parseNPMpackages,
-    _runNPMInstall,
     _spawnChild,
+    _spawnChainedNext,
     _publishResult
   ]);
 };
@@ -57,43 +54,10 @@ function _prepareCMD(next) {
   return next();
 }
 
-function _parseNPMpackages(next) {
-  if (store.runtime !== 'node')
-    return next();
-
-  console.log('Inside ----', store.action + '|' + _parseNPMpackages.name);
-
-  store.packages = [];
-
-  async.series([
-    __parseFilePackages,
-    __createJSON,
-    __writePackageJSON
-  ], function() {
-    return next();
-  });
-}
-
-function _runNPMInstall(next) {
-  if (store.runtime !== 'node')
-    return next();
-
-  console.log('Inside ----', store.action + '|' + _runNPMInstall.name);
-
-  let cmd = 'npm';
-  let args = ['--prefix', './scripts', 'install', './scripts'];
-  console.log('running -----', cmd, args);
-
-  let result = child_process.spawnSync(cmd, args);
-  console.log('ran cmd -----', result.stdout.toString());
-
-  return next();
-}
-
 //spawn the child process and execute the script
 function _spawnChild(next) {
   console.log('Inside ----', store.action + '|' + _spawnChild.name);
-
+  console.log(store);
   console.log('\n------------------');
   console.log('Executing:', store.cmd, store.args);
   console.log('------------------');
@@ -115,6 +79,35 @@ function _spawnChild(next) {
   return next();
 }
 
+function _spawnChainedNext(next) {
+
+  glob('./scripts/' + store.taskname + '.next', {}, function(er, files) {
+    if (files[0]) {
+      fs.readFile(files[0], 'utf8', function(err, data) {
+        if (err) {
+          return console.log(err);
+        }
+
+        console.log(data);
+        let cmd = 'node';
+        let args = [];
+        args.push('./scripts/' + data);
+
+        console.log('\n------------------');
+        console.log('Executing Chained Next:', cmd, args);
+        console.log('------------------');
+
+        const result = child_process.spawnSync(cmd, args);
+
+        store.result.output = 'Output from chained function:\n' + result.stdout.toString();
+        return next();
+      });
+    } else {
+      return next();
+    }
+  });
+}
+
 function _publishResult(next) {
   console.log('Inside ----', store.action + '|' + _publishResult.name);
 
@@ -127,58 +120,5 @@ function _publishResult(next) {
 
       return next();
     });
-  });
-}
-
-
-
-// Package parsing
-
-function __parseFilePackages(next) {
-  console.log('Parsing packages for file:', store.taskFile);
-  glob('./scripts/' + store.taskFile, {}, function(er, files) {
-    fs.readFile(files[0], 'utf8', function(err, data) {
-      if (err) {
-        return console.log(err);
-      }
-
-      let contentArray = data.split('\n');
-      let i = 1;
-
-      contentArray.forEach(l => {
-        let indexOfReq = l.indexOf('require');
-        if (indexOfReq > -1) {
-          store.packages.push(l.slice(indexOfReq + 8, l.length - 2));
-        }
-        i++;
-      });
-
-      return next();
-    });
-  });
-}
-
-function __createJSON(next) {
-  let pkgJSON = {};
-  pkgJSON.dependencies = {};
-
-  store.packages.forEach(p => {
-    p = p.replace(/\'/g, '');
-
-    if (!nodeNativePkgs.nativePkgs.includes(p)) {
-      pkgJSON.dependencies[p] = "*";
-    }
-  });
-
-  store.pkgJSON = pkgJSON;
-  return next();
-}
-
-function __writePackageJSON(next) {
-  fs.writeFile('./scripts/package.json', JSON.stringify(store.pkgJSON), (err) => {
-    if (err) throw err;
-    console.log('The file has been saved with content:',
-      JSON.stringify(store.pkgJSON));
-    return next();
   });
 }

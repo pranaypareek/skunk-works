@@ -33,6 +33,15 @@
         </div>
       </div>
 
+      <div class="form-group">
+        <label for="chainedNext">Chained Function (Optional)</label>
+        <select class="form-control" id="chainedNext"
+                [(ngModel)]="model.chainedNext" name="chainedNext"
+                #chainedNext="ngModel">
+          <option *ngFor="let t of tasks" [value]="t.taskname+extension(t.runtime)">{{t.taskname}} ({{t.runtime}})</option>
+        </select>
+      </div>
+
       <button type="submit" class="btn btn-success" [disabled]="!taskForm.form.valid">Submit</button>
       <button type="button" class="btn btn-default" (click)="newTask(); taskForm.reset()">Cancel</button>
     </form>
