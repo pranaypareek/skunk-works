@@ -99,7 +99,7 @@ function _spawnChainedNext(next) {
 
         const result = child_process.spawnSync(cmd, args);
 
-        store.result.output = 'Output from chained function:\n' + result.stdout.toString();
+        store.result.output += '\nOutput from chained function:\n' + result.stdout.toString();
         return next();
       });
     } else {
